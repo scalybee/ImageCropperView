@@ -25,17 +25,16 @@ public struct ImageCropperView: View {
             self.actionBannerColor = actionBannerColor
         }
     }
-    
-    
+        
     @StateObject var viewModel: ImageMoveViewModel
     
-    ///The displayImage is what wee see on this view.
+    /// The displayImage is what wee see on this view.
     // Display Params
     @State var displayedImage: UIImage?
     @State var displayW: CGFloat = 0.0
     @State var displayH: CGFloat = 0.0
     
-    //Image Params
+    // Image Params
     var imageAttributes: ImageAttributes
     var cropperConfig: CropperConfig
     
@@ -47,12 +46,12 @@ public struct ImageCropperView: View {
     @State var horizontalOffset: CGFloat = 0.0
     @State var verticalOffset: CGFloat = 0.0
     
-    ///The input image is received from the ImagePicker.
-    ///We will need to calculate and refer to its aspectr ratio
-    ///in the functions found in the extensions file.
+    /// The input image is received from the ImagePicker.
+    /// We will need to calculate and refer to its aspectr ratio
+    /// in the functions found in the extensions file.
     @State var inputImage: UIImage?
     
-    ///The input image aspect ratio
+    /// The input image aspect ratio
     @State var inputImageAspectRatio: CGFloat = 0.0
     
     var completion: (Result<UIImage, Error>) -> Void
@@ -90,7 +89,7 @@ public struct ImageCropperView: View {
             
             Rectangle()
                 .fill(cropperConfig.overlayColor)
-                .mask(RectangleShapeMask().fill(style: FillStyle(eoFill: true)))
+                .mask(rectangleShapeMask().fill(style: FillStyle(eoFill: true)))
             
             VStack(spacing: 0) {
                 Spacer()
@@ -126,7 +125,7 @@ public struct ImageCropperView: View {
                 .onChanged { amount in
                     self.currentAmount = amount - 1
                 }
-                .onEnded { amount in
+                .onEnded { _ in
                     self.zoomAmount += self.currentAmount
                     if zoomAmount > 4.0 {
                         withAnimation {
@@ -154,7 +153,8 @@ public struct ImageCropperView: View {
         )
         .simultaneousGesture(
             TapGesture(count: 2)
-                .onEnded(  { resetImageOriginAndScale() } )
+                .onEnded({ resetImageOriginAndScale()
+                })
         )
         .onAppear {
             setCurrentImage()
@@ -162,9 +162,9 @@ public struct ImageCropperView: View {
     }
 }
 
-//MARK: - Masking methods
+// MARK: - Masking methods
 extension ImageCropperView {
-    func RectangleShapeMask() -> Path {
+    func rectangleShapeMask() -> Path {
         let rect = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height)
         let insetRect = CGRect(x: cropperConfig.inset, y: (UIScreen.main.bounds.size.height * 0.5 - ((UIScreen.main.bounds.size.width * 0.5) - cropperConfig.inset)), width: UIScreen.main.bounds.size.width - ( cropperConfig.inset * 2 ), height: UIScreen.main.bounds.size.width - ( cropperConfig.inset * 2 ))
         var shape = Rectangle().path(in: rect)
@@ -172,10 +172,9 @@ extension ImageCropperView {
         return shape
     }
 }
-struct ImageCropperView_Preview: PreviewProvider {
+struct ImageCropperViewPreview: PreviewProvider {
     static var previews: some View {
-        ImageCropperView(navController: UINavigationController(), viewModel: ImageMoveViewModel(scale: 1, xWidth: 0, yHeight: 0), imageAttributes: ImageAttributes(originalImage: UIImage(named:"banner2.png")!, scale: 1, xWidth: 0, yHeight: 0)) { croppedImage in
-            
+        ImageCropperView(navController: UINavigationController(), viewModel: ImageMoveViewModel(scale: 1, xWidth: 0, yHeight: 0), imageAttributes: ImageAttributes(originalImage: UIImage(named: "banner2.png")!, scale: 1, xWidth: 0, yHeight: 0)) { _ in
         }
     }
 }
